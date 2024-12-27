@@ -1,0 +1,13 @@
+{
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "serverless-mysql": "^1.5.5"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "serverless-offline": "^14.4.0"
+  },
+  "scripts": {
+    "test": "jest"
+  }
+}
