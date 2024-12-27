@@ -1,0 +1,47 @@
+# "org" ensures this Service is used with the correct Serverless Framework Access Key.
+org: hicagni
+# "app" enables Serverless Framework Dashboard features and sharing them with other Services.
+app: aws-crud
+# "service" is the name of this project. This will also be added to your AWS resource names.
+service: aws-lambda-crud-node
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  region: us-east-2
+  environment:
+    MYSQL_HOST: ${env:MYSQL_HOST}
+    MYSQL_USERNAME: ${env:MYSQL_USERNAME}
+    MYSQL_PASSWORD: ${env:MYSQL_PASSWORD}
+    MYSQL_DATABASE: ${env:MYSQL_DATABASE}
+    MYSQL_PORT: ${env:MYSQL_PORT}
+ 
+plugins:
+  - serverless-offline
+functions:
+  count_messages:
+    handler: src/messages/message.handler/.countMessages
+    events:
+      - httpApi:
+          path: /count-messages
+          method: get
+    vpc:
+      securityGroupIds:
+        - sg-0ee7fb064ba3ef93f
+      subnetIds:
+        - subnet-0f7d1a1143273fd6b
+        - subnet-0fc3f69a883fd2f98
+        - subnet-0e7d58a64fcfb7916
+  create_campaign:
+    handler: src/campaigns/campaing.handler/.campaingCreate
+    events:
+      - httpApi:
+          path: /campaigns/create
+          method: post
+    vpc:
+      securityGroupIds:
+        - sg-0ee7fb064ba3ef93f
+      subnetIds:
+        - subnet-0f7d1a1143273fd6b
+        - subnet-0fc3f69a883fd2f98
+        - subnet-0e7d58a64fcfb7916
