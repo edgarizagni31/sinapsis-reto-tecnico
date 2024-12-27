@@ -1,0 +1,172 @@
+openapi: 3.0.0
+info: 
+  title: reportes
+  description: reto tecnico sinapis
+  version: 1.0.0
+servers:
+  - url: http://localhost:3000/
+    description: local
+  - url: https://55gdv8dehe.execute-api.us-east-2.amazonaws.com/
+    description: prod
+paths: 
+  /count-messages:
+    get: 
+      parameters:
+        - name: month
+          in: query
+          required: true
+          description: El número del mes en el que fue programado el envio de mensajes.
+          schema:
+            type: integer
+            example: 12
+        - name: clientId
+          in: query
+          description: El id del cliente que programo el envio de mensajes
+          schema:
+            type: integer
+            example: 1
+      responses:
+       '200': 
+          description: cantidad de mensajes activos programados
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties: 
+                  data:
+                    type: array
+                    items: 
+                      type: object
+                      properties:
+                        cantidad: 
+                          type: integer
+                          description: Número de veces que se repite el estado
+                          example: 3
+                        estado:
+                          type: string
+                          description: Estado de envio del mensaje
+                          example: "PROCESO"
+       '400': 
+          description: parametro mes faltante
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties:
+                  message: 
+                    type: string
+                    description: mensaje de error
+                    example: mes es requerido.
+  /campaigns/create: 
+    post: 
+      requestBody: 
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - clientId
+                - name
+                - programingDate
+                - messages 
+              properties:
+                clientId:
+                  type: integer
+                  description: id del cliente
+                  example: 2
+                name: 
+                  type: string 
+                  description: nombre de la campaña
+                  example: Campaña navideña 
+                programingDate:
+                  type: string
+                  format: date
+                  description: fecha cuando se llevara la campaña (YYYY-MM-dd HH:mm:ss)
+                  example: "2024-12-27 09:00:00"
+                messages:
+                  type: array
+                  description: Lista de mensajes a enviar 
+                  items:
+                    type: object
+                    required: 
+                      - sendDatetime 
+                      - message
+                    properties:
+                      sendDatetime: 
+                        type: string
+                        format: date
+                        description: fecha cuando se enviaran los mensajes de campaña (YYYY-MM-dd HH:mm:ss)
+                        example: "2024-12-28 11:00:00"
+                      message: 
+                        type: string
+                        description: mensaje a enviar
+                        example: hoy descuentos en ...
+      responses:
+        '200':
+          description: regresa un objecto con la campaña registrada
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties: 
+                        id: 
+                          type: integer
+                          description: identificador de la campaña
+                          example: 12
+                        status: 
+                          type: integer
+                          description: estado de la campaña, (1) Activo (0) Inactivo.
+                          example: 1
+                        clientId: 
+                          type: integer
+                          description: identificador del cliente que creo la campaña
+                          example: 1 
+                        name:
+                          type: string
+                          description: el nombre de la campaña creada
+                          example: campaña de verano
+                        programingDate: 
+                          type: string
+                          format: date
+                          description: fecha donde se llevara la campaña (YYYY-MM-dd HH:mm:ss)
+                        messages: 
+                          type: array
+                          items: 
+                            type: object
+                          properties: 
+                            sendDatetime: 
+                              type: string
+                              format: date
+                              description: fecha cuando se enviaran los mensajes de campaña (YYYY-MM-dd HH:mm:ss)
+                              example: "2024-12-28 11:00:00"
+                            message: 
+                              type: string
+                              description: mensaje a enviar
+                              example: hoy descuentos en ...    
+        '400':
+          description: los datos no son validos
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties: 
+                  data:
+                    type: array
+                    description: Lista de mensajes de error especifico
+                    items:
+                      type: string
+                    example: [
+                      "clientId es requerido.",
+                      "name es requerido.",
+                      "programingDate es requerido.",
+                      "messages debe ser un arreglo.",
+                      "messages no puedo estar vacio."
+                    ]
+        '500':
+          description: Error interno del servidor
