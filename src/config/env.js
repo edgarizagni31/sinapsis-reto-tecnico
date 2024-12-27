@@ -1,0 +1,15 @@
+const {
+  MYSQL_HOST,
+  MYSQL_USERNAME,
+  MYSQL_PASSWORD,
+  MYSQL_PORT,
+  MYSQL_DATABASE
+} = process.env
+
+module.exports = {
+  MYSQL_HOST,
+  MYSQL_USERNAME,
+  MYSQL_PASSWORD,
+  MYSQL_PORT,
+  MYSQL_DATABASE
+}
